@@ -8,6 +8,7 @@ x2 = 950
 y2 = 50
 mosh_enemy1 = None
 mosh_enemy2 = None
+bullet_list=[]
 
 
 def speed_size(size):
@@ -42,7 +43,7 @@ def effect(x, y):
 
 
 def respawn_enemy1():
-    global enemy1, mosh_enemy1
+    global enemy1, mosh_enemy1,enemy1_speed_y,enemy1_speed_x
     sprite.remove(enemy1)
     coustrume = random.choice(
         ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
@@ -51,11 +52,13 @@ def respawn_enemy1():
     mosh_enemy1 = speed_size(size)
     effect(50, 50)
     enemy1 = sprite.add("battle_city_tanks", x1, y1, coustrume)
+    enemy1_speed_x=0
+    enemy1_speed_y=0
     sprite.set_height_proportionally(enemy1, size)
 
 
 def respawn_enemy2():
-    global enemy2, mosh_enemy2
+    global enemy2, mosh_enemy2,enemy2_speed_y,enemy2_speed_x
     sprite.remove(enemy2)
     coustrume = random.choice(
         ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
@@ -64,6 +67,8 @@ def respawn_enemy2():
     mosh_enemy2 = speed_size(size)
     effect(950, 50)
     enemy2 = sprite.add("battle_city_tanks", x2, y2, coustrume)
+    enemy2_speed_x = 0
+    enemy2_speed_y = 0
     sprite.set_height_proportionally(enemy2, size)
 
 
@@ -101,10 +106,10 @@ def granica(id):
         sprite.move_bottom_to(id, 900)
 
 
-enemy1_x = 0
-enemy1_y = 0
-enemy2_x = 0
-enemy2_y = 0
+enemy1_speed_x = 0
+enemy1_speed_y = 0
+enemy2_speed_x = 0
+enemy2_speed_y = 0
 bul = None
 
 
@@ -144,14 +149,14 @@ def move(keys):
 
 @wrap.always(2000)
 def bot_action():
-    global enemy2_x, enemy2_y, enemy1_x, enemy1_y
-    enemy2_x, enemy2_y = vibor_bot(enemy2, mosh_enemy2)
-    enemy1_x, enemy1_y = vibor_bot(enemy1, mosh_enemy1)
+    global enemy2_speed_x, enemy2_speed_y, enemy1_speed_x, enemy1_speed_y
+    enemy2_speed_x, enemy2_speed_y = vibor_bot(enemy2, mosh_enemy2)
+    enemy1_speed_x, enemy1_speed_y = vibor_bot(enemy1, mosh_enemy1)
+
 
 
 def shot(nomer):
     global bul
-
     x, y = wrap.sprite.get_pos(nomer)
     ugol = wrap.sprite.get_angle(nomer)
     if ugol == 90:
@@ -171,6 +176,7 @@ def shot(nomer):
         bul = wrap.sprite.add("battle_city_items", x, top - 10, "bullet")
         wrap.sprite.set_angle(bul, 0)
 
+    bullet_list.append(bul)
 
 @wrap.on_mouse_down(wrap.BUTTON_LEFT)
 def shot_player():
@@ -179,16 +185,16 @@ def shot_player():
 
 @wrap.always(100)
 def move_bullet():
-    if bul != None:
-        sprite.move_at_angle_dir(bul, 25)
+    for n_bul in bullet_list:
+        sprite.move_at_angle_dir(n_bul,25)
 
 
 @wrap.always(20)
 def bot_move():
-    sprite.move(enemy2, enemy2_x, enemy2_y)
+    sprite.move(enemy2, enemy2_speed_x, enemy2_speed_y)
     granica(enemy2)
 
-    sprite.move(enemy1, enemy1_x, enemy1_y)
+    sprite.move(enemy1, enemy1_speed_x, enemy1_speed_y)
     granica(enemy1)
 
 
@@ -216,12 +222,13 @@ def vibor_bot(nomer_bota, mosh):
 
 @wrap.always(10)
 def colizia_bullet():
+    global bullet_list
     global bul, enemy1
-    if bul != None:
-        to = wrap.sprite.is_collide_any_sprite(bul, [enemy1, enemy2, player])
+    for n_bul in bullet_list:
+        to = wrap.sprite.is_collide_any_sprite(n_bul, [enemy1, enemy2, player])
         if to != None:
-            sprite.remove(bul)
-            bul = None
+            sprite.remove(n_bul)
+            bullet_list.remove(n_bul)
             if to == enemy1:
                 respawn_enemy1()
             if to == enemy2:

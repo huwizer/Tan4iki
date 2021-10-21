@@ -8,7 +8,7 @@ x2 = 950
 y2 = 50
 mosh_enemy1 = None
 mosh_enemy2 = None
-bullet_list=[]
+bullet_list = []
 
 
 def speed_size(size):
@@ -43,7 +43,7 @@ def effect(x, y):
 
 
 def respawn_enemy1():
-    global enemy1, mosh_enemy1,enemy1_speed_y,enemy1_speed_x
+    global enemy1, mosh_enemy1, enemy1_speed_y, enemy1_speed_x
     sprite.remove(enemy1)
     coustrume = random.choice(
         ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
@@ -52,13 +52,13 @@ def respawn_enemy1():
     mosh_enemy1 = speed_size(size)
     effect(50, 50)
     enemy1 = sprite.add("battle_city_tanks", x1, y1, coustrume)
-    enemy1_speed_x=0
-    enemy1_speed_y=0
+    enemy1_speed_x = 0
+    enemy1_speed_y = 0
     sprite.set_height_proportionally(enemy1, size)
 
 
 def respawn_enemy2():
-    global enemy2, mosh_enemy2,enemy2_speed_y,enemy2_speed_x
+    global enemy2, mosh_enemy2, enemy2_speed_y, enemy2_speed_x
     sprite.remove(enemy2)
     coustrume = random.choice(
         ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
@@ -154,9 +154,10 @@ def bot_action():
     enemy1_speed_x, enemy1_speed_y = vibor_bot(enemy1, mosh_enemy1)
 
 
-
 def shot(nomer):
-    global bul
+    if len(bullet_list)>=10:
+        return
+
     x, y = wrap.sprite.get_pos(nomer)
     ugol = wrap.sprite.get_angle(nomer)
     if ugol == 90:
@@ -176,7 +177,9 @@ def shot(nomer):
         bul = wrap.sprite.add("battle_city_items", x, top - 10, "bullet")
         wrap.sprite.set_angle(bul, 0)
 
-    bullet_list.append(bul)
+    bullet_slovar={"bullet":bul,"id_tanka":nomer}
+    bullet_list.append(bullet_slovar)
+
 
 @wrap.on_mouse_down(wrap.BUTTON_LEFT)
 def shot_player():
@@ -186,7 +189,7 @@ def shot_player():
 @wrap.always(100)
 def move_bullet():
     for n_bul in bullet_list:
-        sprite.move_at_angle_dir(n_bul,25)
+        sprite.move_at_angle_dir(n_bul["bullet"], 25)
 
 
 @wrap.always(20)
@@ -225,9 +228,9 @@ def colizia_bullet():
     global bullet_list
     global bul, enemy1
     for n_bul in bullet_list:
-        to = wrap.sprite.is_collide_any_sprite(n_bul, [enemy1, enemy2, player])
+        to = wrap.sprite.is_collide_any_sprite(n_bul["bullet"], [enemy1, enemy2, player])
         if to != None:
-            sprite.remove(n_bul)
+            sprite.remove(n_bul["bullet"])
             bullet_list.remove(n_bul)
             if to == enemy1:
                 respawn_enemy1()
@@ -235,3 +238,21 @@ def colizia_bullet():
                 respawn_enemy2()
             if to == player:
                 respawn_player()
+
+
+
+lydi=[]
+a={"name":"Viktor","age":40}
+a["tatoo"]="Dragon"
+lydi.append(a)
+a={"name":"Masha","age":18}
+lydi.append(a)
+a={"name":"Petya","age":25}
+lydi.append(a)
+a["age"]=30
+
+print(lydi[0])
+a=lydi[0]
+a["age"]=97
+for ttt in lydi:
+    ttt["Birthday"]=2021-ttt["age"]

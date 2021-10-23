@@ -155,7 +155,11 @@ def bot_action():
 
 
 def shot(nomer):
-    if len(bullet_list)>=10:
+    schet=0
+    for n_bull in bullet_list:
+        if n_bull["id_tanka"]==nomer:
+            schet+=1
+    if schet==2:
         return
 
     x, y = wrap.sprite.get_pos(nomer)
@@ -179,7 +183,9 @@ def shot(nomer):
 
     bullet_slovar={"bullet":bul,"id_tanka":nomer}
     bullet_list.append(bullet_slovar)
-
+    print("")
+    for n_bull in bullet_list:
+        print(n_bull)
 
 @wrap.on_mouse_down(wrap.BUTTON_LEFT)
 def shot_player():
@@ -249,10 +255,16 @@ a={"name":"Masha","age":18}
 lydi.append(a)
 a={"name":"Petya","age":25}
 lydi.append(a)
-a["age"]=30
+a["age"]=46
 
-print(lydi[0])
+
 a=lydi[0]
 a["age"]=97
 for ttt in lydi:
     ttt["Birthday"]=2021-ttt["age"]
+
+schet=0
+
+for ttt in lydi:
+    if ttt["age"]>=40:
+        schet=schet+1

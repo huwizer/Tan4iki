@@ -1,5 +1,5 @@
 import time
-import wrap, random
+import wrap, random, tank
 from wrap import sprite
 
 x1 = 50
@@ -21,25 +21,14 @@ def speed_size(size):
     return mosh
 
 
-def effect(x, y):
-    efe = sprite.add("battle_city_items", x, y, "effect_appearance1")
-    time.sleep(0.15)
-    sprite.set_costume(efe, "effect_appearance2")
-    time.sleep(0.15)
-    sprite.set_costume(efe, "effect_appearance3")
-    time.sleep(0.15)
-    sprite.set_costume(efe, "effect_appearance4")
-    time.sleep(0.15)
-    sprite.set_costume(efe, "effect_appearance3")
-    time.sleep(0.15)
-    sprite.set_costume(efe, "effect_appearance2")
-    time.sleep(0.15)
-    sprite.set_costume(efe, "effect_appearance3")
-    time.sleep(0.15)
-    sprite.set_costume(efe, "effect_appearance4")
-    time.sleep(0.15)
-
-    sprite.remove(efe)
+def respawn_player():
+    global player
+    sprite.remove(player)
+    coustrume = random.choice(
+        ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
+         "tank_enemy_size1_purple1"])
+    tank.effect(500, 500)
+    player = sprite.add("battle_city_tanks", 500, 500, coustrume)
 
 
 def respawn_enemy1():
@@ -50,7 +39,7 @@ def respawn_enemy1():
          "tank_enemy_size1_purple1"])
     size = random.randint(15, 45)
     mosh_enemy1 = speed_size(size)
-    effect(50, 50)
+    tank.effect(50, 50)
     enemy1 = sprite.add("battle_city_tanks", x1, y1, coustrume)
     enemy1_speed_x = 0
     enemy1_speed_y = 0
@@ -65,21 +54,11 @@ def respawn_enemy2():
          "tank_enemy_size1_purple1"])
     size = random.randint(15, 45)
     mosh_enemy2 = speed_size(size)
-    effect(950, 50)
+    tank.effect(950, 50)
     enemy2 = sprite.add("battle_city_tanks", x2, y2, coustrume)
     enemy2_speed_x = 0
     enemy2_speed_y = 0
     sprite.set_height_proportionally(enemy2, size)
-
-
-def respawn_player():
-    global player
-    sprite.remove(player)
-    coustrume = random.choice(
-        ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
-         "tank_enemy_size1_purple1"])
-    effect(500, 500)
-    player = sprite.add("battle_city_tanks", 500, 500, coustrume)
 
 
 wrap.world.create_world(1000, 900)
@@ -110,18 +89,6 @@ enemy1_speed_x = 0
 enemy1_speed_y = 0
 enemy2_speed_x = 0
 enemy2_speed_y = 0
-bul = None
-
-
-def povorot(id, x, y):
-    if x > 0:
-        sprite.set_angle(id, 90)
-    elif x < 0:
-        sprite.set_angle(id, 270)
-    elif y > 0:
-        sprite.set_angle(id, 180)
-    elif y < 0:
-        sprite.set_angle(id, 0)
 
 
 @wrap.on_key_always(wrap.K_w, wrap.K_s, wrap.K_d, wrap.K_a)
@@ -142,7 +109,7 @@ def move(keys):
         x = 0
         y = 0
 
-    povorot(player, x, y)
+    tank.povorot(player, x, y)
     sprite.move(player, x, y)
     granica(player)
 
@@ -150,52 +117,20 @@ def move(keys):
 @wrap.always(2000)
 def bot_action():
     global enemy2_speed_x, enemy2_speed_y, enemy1_speed_x, enemy1_speed_y
-    enemy2_speed_x, enemy2_speed_y = vibor_bot(enemy2, mosh_enemy2)
-    enemy1_speed_x, enemy1_speed_y = vibor_bot(enemy1, mosh_enemy1)
+    enemy2_speed_x, enemy2_speed_y = tank.vibor_bot(enemy2, mosh_enemy2, bullet_list)
+    enemy1_speed_x, enemy1_speed_y = tank.vibor_bot(enemy1, mosh_enemy1, bullet_list)
 
-
-def shot(nomer):
-    schet=0
-    for n_bull in bullet_list:
-        if n_bull["id_tanka"]==nomer:
-            schet+=1
-    if schet==2:
-        return
-
-    x, y = wrap.sprite.get_pos(nomer)
-    ugol = wrap.sprite.get_angle(nomer)
-    if ugol == 90:
-        right = sprite.get_right(nomer)
-        bul = wrap.sprite.add("battle_city_items", right + 10, y, "bullet")
-        wrap.sprite.set_angle(bul, 90)
-    elif ugol == 180:
-        bottom = sprite.get_bottom(nomer)
-        bul = wrap.sprite.add("battle_city_items", x, bottom + 10, "bullet")
-        wrap.sprite.set_angle(bul, 180)
-    elif ugol == -90:
-        left = sprite.get_left(nomer)
-        bul = wrap.sprite.add("battle_city_items", left - 10, y, "bullet")
-        wrap.sprite.set_angle(bul, -90)
-    elif ugol == 0:
-        top = sprite.get_top(nomer)
-        bul = wrap.sprite.add("battle_city_items", x, top - 10, "bullet")
-        wrap.sprite.set_angle(bul, 0)
-
-    bullet_slovar={"bullet":bul,"id_tanka":nomer}
-    bullet_list.append(bullet_slovar)
-    print("")
-    for n_bull in bullet_list:
-        print(n_bull)
 
 @wrap.on_mouse_down(wrap.BUTTON_LEFT)
 def shot_player():
-    shot(player)
+    tank.shot(player, bullet_list)
 
 
 @wrap.always(100)
 def move_bullet():
     for n_bul in bullet_list:
         sprite.move_at_angle_dir(n_bul["bullet"], 25)
+    tank.proverka_granici_puli(bullet_list)
 
 
 @wrap.always(20)
@@ -205,28 +140,6 @@ def bot_move():
 
     sprite.move(enemy1, enemy1_speed_x, enemy1_speed_y)
     granica(enemy1)
-
-
-def vibor_bot(nomer_bota, mosh):
-    or_or = random.choice(["x", "y", "stand", "shot"])
-    p_m = random.choice([mosh, -mosh])
-
-    if or_or == "x":
-        enemy_x = p_m
-        enemy_y = 0
-    elif or_or == "y":
-        enemy_x = 0
-        enemy_y = p_m
-    elif or_or == "shot":
-        enemy_y = 0
-        enemy_x = 0
-        shot(nomer_bota)
-    else:
-        enemy_y = 0
-        enemy_x = 0
-
-    povorot(nomer_bota, enemy_x, enemy_y)
-    return [enemy_x, enemy_y]
 
 
 @wrap.always(10)
@@ -243,28 +156,4 @@ def colizia_bullet():
             if to == enemy2:
                 respawn_enemy2()
             if to == player:
-                respawn_player()
-
-
-
-lydi=[]
-a={"name":"Viktor","age":40}
-a["tatoo"]="Dragon"
-lydi.append(a)
-a={"name":"Masha","age":18}
-lydi.append(a)
-a={"name":"Petya","age":25}
-lydi.append(a)
-a["age"]=46
-
-
-a=lydi[0]
-a["age"]=97
-for ttt in lydi:
-    ttt["Birthday"]=2021-ttt["age"]
-
-schet=0
-
-for ttt in lydi:
-    if ttt["age"]>=40:
-        schet=schet+1
+                tank.respawn_player()

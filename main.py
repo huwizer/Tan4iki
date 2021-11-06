@@ -70,19 +70,6 @@ respawn_enemy2()
 respawn_player()
 
 
-def granica(id):
-    top = sprite.get_top(id)
-    bottom = sprite.get_bottom(id)
-    left = sprite.get_left(id)
-    right = sprite.get_right(id)
-    if left <= 0:
-        sprite.move_left_to(id, 0)
-    if right >= 1000:
-        sprite.move_right_to(id, 1000)
-    if top <= 0:
-        sprite.move_top_to(id, 0)
-    if bottom >= 900:
-        sprite.move_bottom_to(id, 900)
 
 
 enemy1_speed_x = 0
@@ -111,14 +98,14 @@ def move(keys):
 
     tank.povorot(player, x, y)
     sprite.move(player, x, y)
-    granica(player)
+    tank.granica(player,100,500,300,600)
 
 
 @wrap.always(2000)
 def bot_action():
     global enemy2_speed_x, enemy2_speed_y, enemy1_speed_x, enemy1_speed_y
-    enemy2_speed_x, enemy2_speed_y = tank.vibor_bot(enemy2, mosh_enemy2, bullet_list)
-    enemy1_speed_x, enemy1_speed_y = tank.vibor_bot(enemy1, mosh_enemy1, bullet_list)
+    enemy2_speed_x, enemy2_speed_y = tank.vibor_bot(enemy2, mosh_enemy2, bullet_list, enemy1)
+    enemy1_speed_x, enemy1_speed_y = tank.vibor_bot(enemy1, mosh_enemy1, bullet_list, player)
 
 
 @wrap.on_mouse_down(wrap.BUTTON_LEFT)
@@ -136,10 +123,10 @@ def move_bullet():
 @wrap.always(20)
 def bot_move():
     sprite.move(enemy2, enemy2_speed_x, enemy2_speed_y)
-    granica(enemy2)
+    tank.granica(enemy2,0,1000,0,900)
 
     sprite.move(enemy1, enemy1_speed_x, enemy1_speed_y)
-    granica(enemy1)
+    tank.granica(enemy1,0,1000,0,900)
 
 
 @wrap.always(10)

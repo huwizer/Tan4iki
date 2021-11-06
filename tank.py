@@ -2,6 +2,21 @@ import random, wrap, time
 from wrap import sprite
 
 
+def granica(id,left,right,top,bottom):
+    top1 = sprite.get_top(id)
+    bottom1 = sprite.get_bottom(id)
+    left1 = sprite.get_left(id)
+    right1 = sprite.get_right(id)
+    if left1 <= left:
+        sprite.move_left_to(id, left)
+    if right1 >= right:
+        sprite.move_right_to(id, right)
+    if top1 <= top:
+        sprite.move_top_to(id, top)
+    if bottom1 >= bottom:
+        sprite.move_bottom_to(id, bottom)
+
+
 def povorot(id, x, y):
     if x > 0:
         sprite.set_angle(id, 90)
@@ -13,26 +28,39 @@ def povorot(id, x, y):
         sprite.set_angle(id, 0)
 
 
-def vibor_bot(nomer_bota, mosh, bullet_list):
-    or_or = random.choice(["x", "y", "stand", "shot"])
-    p_m = random.choice([mosh, -mosh])
-
-    if or_or == "x":
-        enemy_x = p_m
-        enemy_y = 0
-    elif or_or == "y":
+def vibor_bot(nomer_bota, mosh, bullet_list, id_target):
+    x_target, y_target = sprite.get_pos(id_target)
+    x_hunter, y_hunter = sprite.get_pos(nomer_bota)
+    if y_target > y_hunter:
         enemy_x = 0
-        enemy_y = p_m
-    elif or_or == "shot":
-        enemy_y = 0
+        enemy_y = mosh
+    elif y_target < y_hunter:
         enemy_x = 0
-        shot(nomer_bota, bullet_list)
+        enemy_y = -mosh
     else:
-        enemy_y = 0
         enemy_x = 0
-
+        enemy_y = 0
     povorot(nomer_bota, enemy_x, enemy_y)
     return [enemy_x, enemy_y]
+    # or_or = random.choice(["y", "stand", "shot"])
+    # p_m = random.choice([mosh, -mosh])
+    #
+    # if or_or == "x":
+    #     enemy_x = p_m
+    #     enemy_y = 0
+    # elif or_or == "y":
+    #     enemy_x = 0
+    #     enemy_y = p_m
+    # elif or_or == "shot":
+    #     enemy_y = 0
+    #     enemy_x = 0
+    #     shot(nomer_bota, bullet_list)
+    # else:
+    #     enemy_y = 0
+    #     enemy_x = 0
+    #
+    # povorot(nomer_bota, enemy_x, enemy_y)
+    # return [enemy_x, enemy_y]
 
 
 def shot(nomer, bullet_list):

@@ -69,13 +69,14 @@ respawn_enemy1()
 respawn_enemy2()
 respawn_player()
 
-
-
-
 enemy1_speed_x = 0
 enemy1_speed_y = 0
 enemy2_speed_x = 0
 enemy2_speed_y = 0
+top_enemy1 = 0
+bottom_enemy1 = 1000
+left_enemy1 = 0
+right_enemy1 = 1000
 
 
 @wrap.on_key_always(wrap.K_w, wrap.K_s, wrap.K_d, wrap.K_a)
@@ -98,14 +99,22 @@ def move(keys):
 
     tank.povorot(player, x, y)
     sprite.move(player, x, y)
-    tank.granica(player,100,500,300,600)
+    tank.granica(player, 0, 1000, 0, 900)
 
 
 @wrap.always(2000)
 def bot_action():
-    global enemy2_speed_x, enemy2_speed_y, enemy1_speed_x, enemy1_speed_y
-    enemy2_speed_x, enemy2_speed_y = tank.vibor_bot(enemy2, mosh_enemy2, bullet_list, enemy1)
-    enemy1_speed_x, enemy1_speed_y = tank.vibor_bot(enemy1, mosh_enemy1, bullet_list, player)
+    global enemy2_speed_x, enemy2_speed_y, enemy1_speed_x,enemy1_speed_y, top_enemy1, bottom_enemy1, left_enemy1, right_enemy1, top_enemy2, bottom_enemy2, left_enemy2, right_enemy2
+    enemy2_speed_x, enemy2_speed_y, top_enemy2, bottom_enemy2, left_enemy2, right_enemy2 = tank.vibor_bot(enemy2,
+                                                                                                          mosh_enemy2,
+                                                                                                          bullet_list,
+                                                                                                          player, 0,
+                                                                                                          900, 0, 1000)
+    enemy1_speed_x, enemy1_speed_y, top_enemy1, bottom_enemy1, left_enemy1, right_enemy1 = tank.vibor_bot(enemy1,
+                                                                                                          mosh_enemy1,
+                                                                                                          bullet_list,
+                                                                                                          player, 0,
+                                                                                                          900, 0, 1000)
 
 
 @wrap.on_mouse_down(wrap.BUTTON_LEFT)
@@ -123,10 +132,10 @@ def move_bullet():
 @wrap.always(20)
 def bot_move():
     sprite.move(enemy2, enemy2_speed_x, enemy2_speed_y)
-    tank.granica(enemy2,0,1000,0,900)
+    tank.granica(enemy2, left_enemy1, right_enemy1, top_enemy1, bottom_enemy1)
 
-    sprite.move(enemy1, enemy1_speed_x, enemy1_speed_y)
-    tank.granica(enemy1,0,1000,0,900)
+    # sprite.move(enemy1, enemy1_speed_x, enemy1_speed_y)
+    # tank.granica(enemy1, 0, 1000, 0, 900)
 
 
 @wrap.always(10)

@@ -2,7 +2,7 @@ import random, wrap, time
 from wrap import sprite
 
 
-def granica(id,left,right,top,bottom):
+def granica(id, left, right, top, bottom):
     top1 = sprite.get_top(id)
     bottom1 = sprite.get_bottom(id)
     left1 = sprite.get_left(id)
@@ -28,20 +28,22 @@ def povorot(id, x, y):
         sprite.set_angle(id, 0)
 
 
-def vibor_bot(nomer_bota, mosh, bullet_list, id_target):
+def vibor_bot(nomer_bota, mosh, bullet_list, id_target, top, bottom, left, right):
     x_target, y_target = sprite.get_pos(id_target)
     x_hunter, y_hunter = sprite.get_pos(nomer_bota)
     if y_target > y_hunter:
         enemy_x = 0
         enemy_y = mosh
+        bottom = y_target
     elif y_target < y_hunter:
         enemy_x = 0
         enemy_y = -mosh
+        top = y_target
     else:
         enemy_x = 0
         enemy_y = 0
     povorot(nomer_bota, enemy_x, enemy_y)
-    return [enemy_x, enemy_y]
+    return [enemy_x, enemy_y, top, bottom, left, right]
     # or_or = random.choice(["y", "stand", "shot"])
     # p_m = random.choice([mosh, -mosh])
     #

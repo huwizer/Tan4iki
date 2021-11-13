@@ -30,15 +30,17 @@ def povorot(id, x, y):
 
 def vibor_bot(nomer_bota, mosh, bullet_list, id_target, top, bottom, left, right):
     x_target, y_target = sprite.get_pos(id_target)
+    #y_target_top=sprite.get_top(id_target)
+    #y_target_bottom=sprite.get_bottom(id_target)
     x_hunter, y_hunter = sprite.get_pos(nomer_bota)
     if y_target > y_hunter:
         enemy_x = 0
         enemy_y = mosh
-        bottom = y_target
+        bottom = y_target+sprite.get_height(nomer_bota)/2
     elif y_target < y_hunter:
         enemy_x = 0
         enemy_y = -mosh
-        top = y_target
+        top = y_target-sprite.get_height(nomer_bota)/2
     else:
         enemy_x = 0
         enemy_y = 0

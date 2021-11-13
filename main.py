@@ -52,7 +52,7 @@ def respawn_enemy2():
     coustrume = random.choice(
         ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
          "tank_enemy_size1_purple1"])
-    size = random.randint(15, 45)
+    size = random.randint(50, 100)
     mosh_enemy2 = speed_size(size)
     tank.effect(950, 50)
     enemy2 = sprite.add("battle_city_tanks", x2, y2, coustrume)
@@ -77,7 +77,10 @@ top_enemy1 = 0
 bottom_enemy1 = 1000
 left_enemy1 = 0
 right_enemy1 = 1000
-
+top_enemy2 = 0
+bottom_enemy2 = 1000
+left_enemy2 = 0
+right_enemy2 = 1000
 
 @wrap.on_key_always(wrap.K_w, wrap.K_s, wrap.K_d, wrap.K_a)
 def move(keys):
@@ -102,9 +105,9 @@ def move(keys):
     tank.granica(player, 0, 1000, 0, 900)
 
 
-@wrap.always(2000)
+@wrap.always(100)
 def bot_action():
-    global enemy2_speed_x, enemy2_speed_y, enemy1_speed_x,enemy1_speed_y, top_enemy1, bottom_enemy1, left_enemy1, right_enemy1, top_enemy2, bottom_enemy2, left_enemy2, right_enemy2
+    global enemy2_speed_x, enemy2_speed_y, enemy1_speed_x, enemy1_speed_y, top_enemy1, bottom_enemy1, left_enemy1, right_enemy1, top_enemy2, bottom_enemy2, left_enemy2, right_enemy2
     enemy2_speed_x, enemy2_speed_y, top_enemy2, bottom_enemy2, left_enemy2, right_enemy2 = tank.vibor_bot(enemy2,
                                                                                                           mosh_enemy2,
                                                                                                           bullet_list,
@@ -132,7 +135,7 @@ def move_bullet():
 @wrap.always(20)
 def bot_move():
     sprite.move(enemy2, enemy2_speed_x, enemy2_speed_y)
-    tank.granica(enemy2, left_enemy1, right_enemy1, top_enemy1, bottom_enemy1)
+    tank.granica(enemy2, left_enemy2, right_enemy2, top_enemy2, bottom_enemy2)
 
     # sprite.move(enemy1, enemy1_speed_x, enemy1_speed_y)
     # tank.granica(enemy1, 0, 1000, 0, 900)

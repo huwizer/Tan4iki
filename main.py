@@ -1,13 +1,8 @@
 import time
-import wrap, random, tank
+import wrap, random, tank, bullet
 from wrap import sprite
 
-x1 = 50
-y1 = 50
-x2 = 950
-y2 = 50
-mosh_enemy1 = None
-mosh_enemy2 = None
+
 bullet_list = []
 
 
@@ -27,8 +22,9 @@ def respawn_player():
     coustrume = random.choice(
         ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
          "tank_enemy_size1_purple1"])
+    player=tank.create_tank(500,500,coustrume,None)
     tank.effect(500, 500)
-    player = sprite.add("battle_city_tanks", 500, 500, coustrume)
+
 
 
 def respawn_enemy1():
@@ -37,10 +33,10 @@ def respawn_enemy1():
     coustrume = random.choice(
         ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
          "tank_enemy_size1_purple1"])
-    size = random.randint(15, 45)
+    size = random.randint(20, 40)
     mosh_enemy1 = speed_size(size)
     tank.effect(50, 50)
-    enemy1 = sprite.add("battle_city_tanks", x1, y1, coustrume)
+    enemy1 = tank.create_tank(50,50,coustrume,mosh_enemy1)
     enemy1_speed_x = 0
     enemy1_speed_y = 0
     sprite.set_height_proportionally(enemy1, size)
@@ -52,10 +48,10 @@ def respawn_enemy2():
     coustrume = random.choice(
         ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
          "tank_enemy_size1_purple1"])
-    size = random.randint(50, 100)
+    size = random.randint(20, 40)
     mosh_enemy2 = speed_size(size)
     tank.effect(950, 50)
-    enemy2 = sprite.add("battle_city_tanks", x2, y2, coustrume)
+    enemy2 = tank.create_tank(950,50,coustrume,mosh_enemy2)
     enemy2_speed_x = 0
     enemy2_speed_y = 0
     sprite.set_height_proportionally(enemy2, size)
@@ -101,41 +97,41 @@ def move(keys):
         y = 0
 
     tank.povorot(player, x, y)
-    sprite.move(player, x, y)
+    sprite.move(player["id"], x, y)
     tank.granica(player, 0, 1000, 0, 900)
 
 
 @wrap.always(100)
 def bot_action():
     global enemy2_speed_x, enemy2_speed_y, enemy1_speed_x, enemy1_speed_y, top_enemy1, bottom_enemy1, left_enemy1, right_enemy1, top_enemy2, bottom_enemy2, left_enemy2, right_enemy2
-    enemy2_speed_x, enemy2_speed_y, top_enemy2, bottom_enemy2, left_enemy2, right_enemy2 = tank.vibor_bot(enemy2,
-                                                                                                          mosh_enemy2,
-                                                                                                          bullet_list,
-                                                                                                          player, 0,
-                                                                                                          900, 0, 1000)
-    enemy1_speed_x, enemy1_speed_y, top_enemy1, bottom_enemy1, left_enemy1, right_enemy1 = tank.vibor_bot(enemy1,
-                                                                                                          mosh_enemy1,
-                                                                                                          bullet_list,
-                                                                                                          player, 0,
-                                                                                                          900, 0, 1000)
+    # enemy2_speed_x, enemy2_speed_y, top_enemy2, bottom_enemy2, left_enemy2, right_enemy2 = tank.vibor_bot(enemy2,
+    #                                                                                                       mosh_enemy2,
+    #                                                                                                       bullet_list,
+    #                                                                                                       player["id"], 0,
+    #                                                                                                       900, 0, 1000)
+    # enemy1_speed_x, enemy1_speed_y, top_enemy1, bottom_enemy1, left_enemy1, right_enemy1 = tank.vibor_bot(enemy1,
+    #                                                                                                       mosh_enemy1,
+    #                                                                                                       bullet_list,
+    #                                                                                                       player["id"], 0,
+    #                                                                                                       900, 0, 1000)
 
 
 @wrap.on_mouse_down(wrap.BUTTON_LEFT)
 def shot_player():
-    tank.shot(player, bullet_list)
+    bullet.shot(player["id"], bullet_list)
 
 
 @wrap.always(100)
 def move_bullet():
     for n_bul in bullet_list:
         sprite.move_at_angle_dir(n_bul["bullet"], 25)
-    tank.proverka_granici_puli(bullet_list)
+    bullet.proverka_granici_puli(bullet_list)
 
 
 @wrap.always(20)
 def bot_move():
     sprite.move(enemy2, enemy2_speed_x, enemy2_speed_y)
-    tank.granica(enemy2, left_enemy2, right_enemy2, top_enemy2, bottom_enemy2)
+    #tank.granica(enemy2, left_enemy2, right_enemy2, top_enemy2, bottom_enemy2)
 
     # sprite.move(enemy1, enemy1_speed_x, enemy1_speed_y)
     # tank.granica(enemy1, 0, 1000, 0, 900)
@@ -146,7 +142,7 @@ def colizia_bullet():
     global bullet_list
     global bul, enemy1
     for n_bul in bullet_list:
-        to = wrap.sprite.is_collide_any_sprite(n_bul["bullet"], [enemy1, enemy2, player])
+        to = wrap.sprite.is_collide_any_sprite(n_bul["bullet"], [enemy1, enemy2, player["id"]])
         if to != None:
             sprite.remove(n_bul["bullet"])
             bullet_list.remove(n_bul)

@@ -2,10 +2,19 @@ import random, wrap, time
 from wrap import sprite
 
 
-def create_tank(x, y, costume, mosh):
+def create_tank(x, y, mosh, size):
+    effect(x, y)
+    costume = random.choice(
+        ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
+         "tank_enemy_size1_purple1"])
     tank = sprite.add("battle_city_tanks", x, y, costume)
     tank_slovar = {"id": tank, "mosh": mosh}
+    sprite.set_height_proportionally(tank,size)
     return tank_slovar
+
+
+def move_up():
+
 
 
 def granica(tank, left, right, top, bottom):

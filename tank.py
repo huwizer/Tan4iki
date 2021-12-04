@@ -8,13 +8,45 @@ def create_tank(x, y, mosh, size):
         ["tank_player_size1_white1", "tank_enemy_size1_yellow1", "tank_enemy_size1_green1",
          "tank_enemy_size1_purple1"])
     tank = sprite.add("battle_city_tanks", x, y, costume)
-    tank_slovar = {"id": tank, "mosh": mosh}
-    sprite.set_height_proportionally(tank,size)
+    tank_slovar = {
+        "id": tank,
+        "mosh": mosh,
+        "speed_x": 0,
+        "speed_y": 0,
+        "top":0,
+        "bottom":0,
+        "left":0,
+        "right":0
+    }
+    sprite.set_height_proportionally(tank, size)
     return tank_slovar
 
+def move_bot(tank):
+    povorot(tank, tank["speed_x"], tank["speed_y"])
+    sprite.move(tank["id"], tank["speed_x"], tank["speed_y"])
+    granica(tank, tank["left"], tank["right"], tank["top"], tank["bottom"])
 
-def move_up():
 
+def move(tank, x, y):
+    povorot(tank, x, y)
+    sprite.move(tank["id"], x, y)
+    granica(tank, 0, 1000, 0, 900)
+
+
+def move_up(tank):
+    move(tank, 0, -tank["mosh"])
+
+
+def move_down(tank):
+    move(tank, 0, tank["mosh"])
+
+
+def move_left(tank):
+    move(tank, -tank["mosh"], 0)
+
+
+def move_right(tank):
+    move(tank, tank["mosh"], 0)
 
 
 def granica(tank, left, right, top, bottom):
@@ -49,37 +81,16 @@ def vibor_bot(tank, mosh, bullet_list, id_target, top, bottom, left, right):
     # y_target_bottom=sprite.get_bottom(id_target)
     x_hunter, y_hunter = sprite.get_pos(tank["id"])
     if y_target > y_hunter:
-        enemy_x = 0
-        enemy_y = mosh
+        tank["speed_x"] = 0
+        tank["speed_y"] = mosh
         bottom = y_target + sprite.get_height(tank["id"]) / 2
     elif y_target < y_hunter:
-        enemy_x = 0
-        enemy_y = -mosh
+        tank["speed_x"] = 0
+        tank["speed_y"] = -mosh
         top = y_target - sprite.get_height(tank["id"]) / 2
     else:
-        enemy_x = 0
-        enemy_y = 0
-    povorot(tank["id"], enemy_x, enemy_y)
-    return [enemy_x, enemy_y, top, bottom, left, right]
-    # or_or = random.choice(["y", "stand", "shot"])
-    # p_m = random.choice([mosh, -mosh])
-    #
-    # if or_or == "x":
-    #     enemy_x = p_m
-    #     enemy_y = 0
-    # elif or_or == "y":
-    #     enemy_x = 0
-    #     enemy_y = p_m
-    # elif or_or == "shot":
-    #     enemy_y = 0
-    #     enemy_x = 0
-    #     shot(nomer_bota, bullet_list)
-    # else:
-    #     enemy_y = 0
-    #     enemy_x = 0
-    #
-    # povorot(nomer_bota, enemy_x, enemy_y)
-    # return [enemy_x, enemy_y]
+        tank["speed_x"] = 0
+        tank["speed_y"] = 0
 
 
 def effect(x, y):

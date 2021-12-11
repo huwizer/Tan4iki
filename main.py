@@ -17,13 +17,15 @@ def speed_size(size):
 
 def respawn_player():
     global player
-    sprite.remove(player)
+    if player != None:
+        tank.remove(player)
     player = tank.create_tank(500, 500, 3, 32)
 
 
 def respawn_enemy1():
-    global enemy1, enemy1_speed_y, enemy1_speed_x
-    sprite.remove(enemy1)
+    global enemy1
+    if enemy1 != None:
+        tank.remove(enemy1)
     size = random.randint(20, 40)
     mosh_enemy1 = speed_size(size)
     enemy1 = tank.create_tank(50, 50, mosh_enemy1, size)
@@ -31,11 +33,14 @@ def respawn_enemy1():
 
 
 def respawn_enemy2():
-    global enemy2, enemy2_speed_y, enemy2_speed_x
-    sprite.remove(enemy2)
+    global enemy2
+    if enemy2 != None:
+        tank.remove(enemy2)
     size = random.randint(20, 40)
     mosh_enemy2 = speed_size(size)
     enemy2 = tank.create_tank(950, 50, mosh_enemy2, size)
+
+
 
 
 wrap.world.create_world(1000, 900)
@@ -73,7 +78,7 @@ def move(keys):
 
 @wrap.always(100)
 def bot_action():
-
+    print("Hi")
     # top_enemy2, bottom_enemy2, left_enemy2, right_enemy2 = tank.vibor_bot(enemy2,
     #                                                                                                       mosh_enemy2,
     #                                                                                                       bullet_list,
@@ -112,13 +117,13 @@ def colizia_bullet():
     global bullet_list
     global bul, enemy1
     for n_bul in bullet_list:
-        to = wrap.sprite.is_collide_any_sprite(n_bul["bullet"], enemy1["id"], enemy2["id"], player["id"])
+        to = wrap.sprite.is_collide_any_sprite(n_bul["bullet"], [enemy1["id"], enemy2["id"], player["id"]])
         if to != None:
             sprite.remove(n_bul["bullet"])
             bullet_list.remove(n_bul)
-            if to == enemy1:
+            if to == enemy1["id"]:
                 respawn_enemy1()
-            if to == enemy2:
+            if to == enemy2["id"]:
                 respawn_enemy2()
-            if to == player:
-                tank.respawn_player()
+            if to == player["id"]:
+                respawn_player()

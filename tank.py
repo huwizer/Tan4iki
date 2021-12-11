@@ -112,3 +112,8 @@ def effect(x, y):
     time.sleep(0.15)
 
     sprite.remove(efe)
+
+
+
+def remove(tank):
+    sprite.remove(tank["id"])

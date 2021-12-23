@@ -13,13 +13,14 @@ def create_tank(x, y, mosh, size):
         "mosh": mosh,
         "speed_x": 0,
         "speed_y": 0,
-        "top":0,
-        "bottom":0,
-        "left":0,
-        "right":0
+        "top": 0,
+        "bottom": 900,
+        "left": 0,
+        "right": 1000
     }
     sprite.set_height_proportionally(tank, size)
     return tank_slovar
+
 
 def move_bot(tank):
     povorot(tank, tank["speed_x"], tank["speed_y"])
@@ -75,18 +76,18 @@ def povorot(tank, x, y):
         sprite.set_angle(tank["id"], 0)
 
 
-def vibor_bot(tank, mosh, bullet_list, id_target, top, bottom, left, right):
+def vibor_bot(tank, bullet_list, id_target, top, bottom, left, right):
     x_target, y_target = sprite.get_pos(id_target)
-    # y_target_top=sprite.get_top(id_target)
-    # y_target_bottom=sprite.get_bottom(id_target)
+    y_target_top = sprite.get_top(id_target)
+    y_target_bottom = sprite.get_bottom(id_target)
     x_hunter, y_hunter = sprite.get_pos(tank["id"])
     if y_target > y_hunter:
         tank["speed_x"] = 0
-        tank["speed_y"] = mosh
+        tank["speed_y"] = tank["mosh"]
         bottom = y_target + sprite.get_height(tank["id"]) / 2
     elif y_target < y_hunter:
         tank["speed_x"] = 0
-        tank["speed_y"] = -mosh
+        tank["speed_y"] = -tank["mosh"]
         top = y_target - sprite.get_height(tank["id"]) / 2
     else:
         tank["speed_x"] = 0
@@ -112,7 +113,6 @@ def effect(x, y):
     time.sleep(0.15)
 
     sprite.remove(efe)
-
 
 
 def remove(tank):
